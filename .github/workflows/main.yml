@@ -1,0 +1,36 @@
+name: Unzip and Publish Samina Fashion
+
+on:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Unzip Source Code
+        run: |
+          # Yahan apni zip file ka sahi naam likhein
+          unzip "*.zip" -d ./extracted_code
+          # Folder ke andar dakhil hone ke liye
+          find ./extracted_code -name "*.csproj"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore and Publish
+        run: |
+          # Project file dhoond kar publish karna
+          dotnet publish ./extracted_code/**/*.csproj -c Release -r win-x86 --self-contained true -o ./deploy
+
+      - name: Upload Published Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: Samina_Fashion_Final_Deploy
+          path: ./deploy
+          
