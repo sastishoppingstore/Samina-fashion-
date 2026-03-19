@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#c0395a" />
+  <title>Samina Fashion Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --rose: #c0395a;
+      --rose-dark: #8c1f38;
+      --gold: #d4a853;
+      --cream: #fdf6f0;
+      --dark: #1a0a0f;
+      --muted: #7d5d66;
+      --card: #fffaf7;
+      --border: rgba(140, 31, 56, 0.12);
+      --success: #1f9d62;
+      --warning: #f39c12;
+      --shadow: 0 12px 24px rgba(26, 10, 15, 0.08);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --header-h: 76px;
+      --bottom-h: 76px;
+      --admin-bottom-h: 78px;
+      --transition: 240ms ease;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; background: linear-gradient(180deg, #fff7f1 0%, #fdf6f0 100%); color: var(--dark); font-family: 'DM Sans', sans-serif; overscroll-behavior-y: contain; }
+    body { min-height: 100vh; display: flex; justify-content: center; }
+    button, input, select, textarea { font: inherit; }
+    .app-shell {
+      width: min(100%, 430px);
+      min-height: 100vh;
+      background: var(--cream);
+      position: relative;
+      overflow-x: hidden;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 10px 40px rgba(26,10,15,0.08);
+    }
+    .safe-top { height: env(safe-area-inset-top, 0px); background: var(--rose); }
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: 10px 16px 12px;
+      background: rgba(253, 246, 240, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(140, 31, 56, 0.08);
+    }
+    .header-row { display: flex; align-items: center; gap: 10px; }
+    .logo-pill {
+      display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark)); color: white;
+      padding: 12px 14px; border-radius: 18px; box-shadow: var(--shadow); cursor: pointer;
+    }
+    .logo-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px; background: rgba(255,255,255,0.18); font-size: 18px; }
+    .logo-text { min-width: 0; }
+    .logo-text h1 { margin: 0; font: 700 1rem 'Playfair Display', serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .logo-text small { display: block; font-size: 0.72rem; opacity: 0.85; }
+    .icon-btn {
+      border: none; width: 44px; height: 44px; border-radius: 16px; background: #fff; color: var(--rose-dark);
+      box-shadow: 0 8px 18px rgba(140, 31, 56, 0.12); position: relative;
+    }
+    .badge {
+      position: absolute; top: -4px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--gold); color: var(--dark);
+      font-size: 0.66rem; font-weight: 700; display: grid; place-items: center;
+    }
+    .search-wrap { margin-top: 10px; display: flex; gap: 10px; }
+    .search-bar {
+      flex: 1; display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--border);
+      border-radius: 16px; padding: 0 14px; box-shadow: 0 6px 16px rgba(26,10,15,0.05);
+    }
+    .search-bar input { border: none; outline: none; background: transparent; flex: 1; height: 46px; font-size: 0.95rem; }
+    .chip-btn, .ghost-btn, .primary-btn, .outline-btn, .tiny-btn, .tab-btn, .qty-btn, .size-btn, .color-btn, .status-chip, .filter-pill {
+      border: none; cursor: pointer; transition: transform var(--transition), background var(--transition), color var(--transition), box-shadow var(--transition), opacity var(--transition);
+    }
+    .chip-btn:active, .ghost-btn:active, .primary-btn:active, .outline-btn:active, .tiny-btn:active, .tab-btn:active, .qty-btn:active, .size-btn:active, .color-btn:active, .filter-pill:active { transform: scale(0.97); }
+    .view-stack { position: relative; min-height: calc(100vh - var(--bottom-h)); }
+    .view {
+      display: none; padding: 14px 14px 110px; animation: fadeIn 280ms ease;
+    }
+    .view.active { display: block; }
+    .admin-mode .view { padding-bottom: 110px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+    .hero {
+      background: linear-gradient(135deg, rgba(192,57,90,0.96), rgba(140,31,56,0.98)); color: white; border-radius: 24px; padding: 18px;
+      box-shadow: var(--shadow); overflow: hidden; position: relative;
+    }
+    .hero::after {
+      content: ''; position: absolute; inset: auto -40px -40px auto; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.08);
+    }
+    .hero .tag { display: inline-flex; gap: 6px; align-items: center; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.16); font-size: 0.75rem; }
+    .hero h2 { margin: 12px 0 6px; font: 800 1.75rem/1.1 'Playfair Display', serif; }
+    .hero p { margin: 0 0 14px; color: rgba(255,255,255,0.82); max-width: 250px; }
+    .hero-cta { display: flex; align-items: center; gap: 10px; }
+    .primary-btn {
+      background: linear-gradient(135deg, var(--gold), #eccf8f); color: var(--dark); font-weight: 700; padding: 12px 18px; border-radius: 16px; box-shadow: 0 10px 18px rgba(212,168,83,0.28);
+    }
+    .ghost-btn {
+      background: rgba(255,255,255,0.14); color: white; padding: 12px 15px; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .section { margin-top: 18px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .section-head h3 { margin: 0; font: 700 1.15rem 'Playfair Display', serif; }
+    .section-head small { color: var(--muted); }
+    .chips-row, .scroll-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .chips-row::-webkit-scrollbar, .scroll-row::-webkit-scrollbar, .bottom-nav::-webkit-scrollbar { display: none; }
+    .chip-btn {
+      flex: 0 0 auto; display: flex; align-items: center; gap: 8px; white-space: nowrap; padding: 12px 14px; border-radius: 16px; background: #fff; color: var(--dark); border: 1px solid var(--border); box-shadow: 0 6px 14px rgba(26,10,15,0.05);
+    }
+    .chip-btn.active { background: linear-gradient(135deg, var(--rose), var(--rose-dark)); color: white; }
+    .promo-strip {
+      margin-top: 16px; background: linear-gradient(135deg, rgba(212,168,83,0.18), rgba(212,168,83,0.06)); border: 1px dashed rgba(212,168,83,0.8);
+      color: var(--dark); border-radius: 18px; padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .promo-code { color: var(--rose-dark); font-weight: 700; }
+    .card, .product-card, .mini-card, .admin-card, .order-card, .profile-card, .accordion-card {
+      background: #fff; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 18px rgba(26,10,15,0.05);
+    }
+    .flash-card { min-width: 190px; padding: 12px; position: relative; }
+    .product-emoji {
+      width: 100%; aspect-ratio: 1 / 1; display: grid; place-items: center; border-radius: 18px; font-size: 3rem; background: linear-gradient(135deg, rgba(192,57,90,0.14), rgba(212,168,83,0.18));
+      user-select: none;
+    }
+    .product-card { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+    .product-card .product-emoji { font-size: 2.6rem; }
+    .product-title { font-weight: 700; font-size: 0.94rem; line-height: 1.25; min-height: 2.45em; }
+    .price-row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+    .price { font-weight: 700; color: var(--rose-dark); }
+    .old-price { color: var(--muted); text-decoration: line-through; font-size: 0.82rem; }
+    .discount-badge, .status-badge, .sale-badge, .small-badge {
+      display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; font-size: 0.74rem; padding: 6px 10px; font-weight: 700;
+    }
+    .discount-badge, .sale-badge { background: rgba(192,57,90,0.12); color: var(--rose-dark); }
+    .small-badge { background: rgba(212,168,83,0.18); color: #7d5716; }
+    .status-badge.pending { background: rgba(243,156,18,0.16); color: #9f6406; }
+    .status-badge.processing { background: rgba(52,152,219,0.16); color: #236b99; }
+    .status-badge.shipped { background: rgba(142,68,173,0.16); color: #6f3790; }
+    .status-badge.delivered { background: rgba(31,157,98,0.14); color: #17784b; }
+    .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.8rem; color: var(--muted); }
+    .stars { color: var(--gold); letter-spacing: 1px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .actions-row { display: flex; gap: 8px; }
+    .outline-btn, .tiny-btn {
+      background: #fff; color: var(--rose-dark); border: 1px solid rgba(140,31,56,0.16); border-radius: 14px; padding: 10px 12px; font-weight: 700;
+    }
+    .tiny-btn { padding: 8px 10px; border-radius: 12px; font-size: 0.8rem; }
+    .outline-btn.fill { background: rgba(192,57,90,0.08); }
+    .w-full { width: 100%; }
+    .progress {
+      width: 100%; height: 8px; border-radius: 999px; background: rgba(140,31,56,0.08); overflow: hidden;
+    }
+    .progress > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), var(--rose)); }
+    .testimonial-track { display: flex; transition: transform 320ms ease; }
+    .testimonial-card { min-width: 100%; padding: 16px; }
+    .testimonial-card p { margin: 0 0 12px; color: #54363f; line-height: 1.5; }
+    .footer-card {
+      margin-top: 18px; background: linear-gradient(135deg, #2a1017, var(--dark)); color: white; border-radius: 24px; padding: 18px;
+    }
+    .footer-card a { color: #ffd986; text-decoration: none; }
+    .footer-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .wa-btn {
+      position: sticky; bottom: calc(var(--bottom-h) + 8px); margin-left: auto; margin-top: 14px; display: inline-flex; align-items: center; gap: 10px;
+      background: #25D366; color: white; border: none; border-radius: 999px; padding: 12px 16px; box-shadow: 0 10px 18px rgba(37, 211, 102, 0.25); z-index: 10;
+    }
+    .filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .filter-pill {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 10px 10px; font-size: 0.84rem; color: var(--dark);
+    }
+    .list-stack { display: grid; gap: 12px; }
+    .product-detail-image {
+      width: 100%; aspect-ratio: 1 / 1; border-radius: 28px; background: linear-gradient(135deg, rgba(192,57,90,0.18), rgba(212,168,83,0.22));
+      display: grid; place-items: center; font-size: 5rem; position: relative; overflow: hidden;
+    }
+    .swipe-hint { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 0.74rem; background: rgba(255,255,255,0.68); padding: 7px 10px; border-radius: 999px; }
+    .selector-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .size-btn {
+      min-width: 42px; padding: 11px 12px; border-radius: 12px; background: #fff; border: 1px solid var(--border); font-weight: 700;
+    }
+    .size-btn.active { background: var(--rose-dark); color: white; }
+    .color-btn {
+      width: 34px; height: 34px; border-radius: 50%; border: 3px solid transparent; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    .color-btn.active { border-color: var(--dark); transform: scale(1.05); }
+    .qty-box {
+      display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 6px;
+    }
+    .qty-btn { width: 34px; height: 34px; border-radius: 12px; background: rgba(192,57,90,0.08); color: var(--rose-dark); font-weight: 700; }
+    .tabs-row { display: flex; gap: 8px; }
+    .tab-btn { flex: 1; border-radius: 14px; padding: 11px; background: #fff; border: 1px solid var(--border); font-weight: 700; }
+    .tab-btn.active { background: var(--rose); color: white; }
+    .tab-panel { padding: 14px; background: rgba(255,255,255,0.7); border-radius: 16px; border: 1px solid var(--border); line-height: 1.55; color: #5a4148; }
+    .cart-item, .order-row, .admin-product-row, .category-row, .settings-row {
+      display: grid; gap: 10px; padding: 12px;
+    }
+    .cart-item { grid-template-columns: 66px 1fr; align-items: center; }
+    .thumb { width: 66px; height: 66px; border-radius: 18px; display: grid; place-items: center; font-size: 2rem; background: linear-gradient(135deg, rgba(192,57,90,0.14), rgba(212,168,83,0.18)); }
+    .cart-meta h4, .admin-product-row h4, .order-card h4, .profile-card h4, .accordion-head h4 { margin: 0; }
+    .muted { color: var(--muted); }
+    .summary-box { padding: 14px; display: grid; gap: 10px; }
+    .line-between { display: flex; justify-content: space-between; gap: 10px; }
+    .line-between.total { font-weight: 700; font-size: 1.05rem; padding-top: 8px; border-top: 1px dashed rgba(140,31,56,0.15); }
+    .field, .select, textarea {
+      width: 100%; border: 1px solid var(--border); background: #fff; border-radius: 16px; padding: 13px 14px; outline: none;
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .form-grid { display: grid; gap: 10px; }
+    .accordion-card { overflow: hidden; }
+    .accordion-head { padding: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; }
+    .accordion-body { display: none; padding: 0 14px 14px; }
+    .accordion-card.open .accordion-body { display: block; }
+    .empty-state {
+      padding: 28px 20px; text-align: center; color: var(--muted); display: grid; gap: 10px; place-items: center;
+    }
+    .empty-state .emoji { font-size: 3rem; }
+    .profile-card, .admin-card, .order-card { padding: 14px; }
+    .link-list { display: grid; gap: 10px; }
+    .link-item {
+      display: flex; justify-content: space-between; align-items: center; background: rgba(192,57,90,0.05); padding: 14px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer;
+    }
+    .bottom-nav {
+      position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: min(100%, 430px); display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(253, 246, 240, 0.94); backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(140,31,56,0.1); z-index: 50;
+    }
+    .nav-btn {
+      border: none; background: transparent; display: grid; gap: 4px; place-items: center; color: var(--muted); padding: 8px 4px; border-radius: 16px; font-size: 0.72rem; font-weight: 700;
+    }
+    .nav-btn.active { color: var(--rose-dark); background: rgba(192,57,90,0.08); }
+    .nav-icon { font-size: 1.12rem; }
+    .hidden { display: none !important; }
+    .toast-stack {
+      position: fixed; left: 50%; transform: translateX(-50%); bottom: 94px; width: min(92%, 390px); display: grid; gap: 8px; z-index: 80;
+    }
+    .toast {
+      padding: 12px 14px; border-radius: 16px; color: white; background: rgba(26,10,15,0.92); box-shadow: 0 10px 18px rgba(26,10,15,0.2); animation: toastIn 240ms ease;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(26,10,15,0.55); display: none; align-items: flex-end; justify-content: center; z-index: 90; padding: 12px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      width: min(100%, 430px); max-height: 88vh; overflow: auto; background: var(--cream); border-radius: 26px 26px 14px 14px; padding: 18px; box-shadow: 0 20px 40px rgba(26,10,15,0.3);
+    }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .close-btn { border: none; width: 38px; height: 38px; border-radius: 14px; background: rgba(192,57,90,0.08); color: var(--rose-dark); }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .stat-card { padding: 14px; border-radius: 18px; background: linear-gradient(135deg, rgba(192,57,90,0.08), rgba(212,168,83,0.12)); border: 1px solid var(--border); }
+    .stat-card strong { display: block; margin-top: 8px; font-size: 1.25rem; }
+    .admin-product-row, .category-row, .settings-row { background: rgba(255,255,255,0.76); border-radius: 18px; border: 1px solid var(--border); }
+    .admin-product-row { grid-template-columns: 56px 1fr; align-items: center; }
+    .row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .toggle {
+      position: relative; width: 52px; height: 30px; border-radius: 999px; background: rgba(140,31,56,0.16); cursor: pointer; flex-shrink: 0;
+    }
+    .toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: white; transition: transform var(--transition);
+    }
+    .toggle.active { background: rgba(31,157,98,0.6); }
+    .toggle.active::after { transform: translateX(22px); }
+    .pill-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .status-chip { white-space: nowrap; padding: 9px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--border); color: var(--dark); }
+    .status-chip.active { background: var(--rose-dark); color: white; }
+    .spinner-refresh {
+      position: sticky; top: 0; z-index: 35; margin: 0 auto; width: 48px; height: 0; overflow: hidden; transition: height var(--transition); display: grid; place-items: center;
+    }
+    .spinner-refresh.show { height: 42px; }
+    .spinner {
+      width: 28px; height: 28px; border: 3px solid rgba(192,57,90,0.18); border-top-color: var(--rose); border-radius: 50%; animation: spin 800ms linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .order-card { display: grid; gap: 10px; }
+    .order-summary { display: grid; gap: 5px; font-size: 0.88rem; color: #5a4048; }
+    .admin-filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+    .right { text-align: right; }
+    .fade-text { min-height: 24px; }
+    .mini-note { font-size: 0.78rem; color: var(--muted); }
+    .order-success { text-align: center; padding: 10px 0 6px; }
+    .order-success .emoji { font-size: 3.4rem; }
+    .countdown { font-weight: 700; color: var(--rose-dark); }
+    .heart-btn.active { background: rgba(192,57,90,0.12); color: var(--rose-dark); }
+    .hidden-admin-trigger { opacity: 0.12; }
+    .admin-panel .section:first-child { margin-top: 0; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .center { text-align: center; }
+    @media (min-width: 431px) {
+      body { padding: 18px 0; }
+      .app-shell, .bottom-nav { border-radius: 28px; }
+      .bottom-nav { bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <div class="safe-top"></div>
+    <div class="spinner-refresh" id="pullRefresh"><div class="spinner"></div></div>
+    <header class="app-header" id="customerHeader">
+      <div class="header-row">
+        <div class="logo-pill" id="logoTapArea">
+          <div class="logo-mark">🧵</div>
+          <div class="logo-text">
+            <h1 id="storeNameHeader">Samina Fashion</h1>
+            <small>Pakistani fashion for every day ✨</small>
+          </div>
+        </div>
+        <button class="icon-btn" id="bellBtn" aria-label="Notifications">🔔<span class="badge" id="notifBadge">3</span></button>
+        <button class="icon-btn" id="headerCartBtn" aria-label="Cart">🛒<span class="badge" id="cartBadge">0</span></button>
+      </div>
+      <div class="search-wrap">
+        <div class="search-bar">
+          <span>🔎</span>
+          <input id="globalSearch" placeholder="Search dresses, jewelry, handbags..." />
+        </div>
+        <button class="icon-btn" id="searchOpenBtn" aria-label="Search products">✨</button>
+      </div>
+    </header>
+
+    <main class="view-stack" id="viewStack">
+      <section class="view active" id="view-home"></section>
+      <section class="view" id="view-shop"></section>
+      <section class="view" id="view-product"></section>
+      <section class="view" id="view-cart"></section>
+      <section class="view" id="view-checkout"></section>
+      <section class="view" id="view-orders"></section>
+      <section class="view" id="view-wishlist"></section>
+      <section class="view" id="view-profile"></section>
+      <section class="view" id="view-admin"></section>
+    </main>
+
+    <button class="wa-btn" id="whatsappBtn">💬 WhatsApp Us</button>
+  </div>
+
+  <nav class="bottom-nav" id="customerNav">
+    <button class="nav-btn active" data-view="home"><span class="nav-icon">🏠</span><span>Home</span></button>
+    <button class="nav-btn" data-view="shop"><span class="nav-icon">🛍️</span><span>Shop</span></button>
+    <button class="nav-btn" data-view="cart"><span class="nav-icon">🛒</span><span>Cart</span></button>
+    <button class="nav-btn" data-view="wishlist"><span class="nav-icon">💖</span><span>Wishlist</span></button>
+    <button class="nav-btn" data-view="profile"><span class="nav-icon">👤</span><span>Profile</span></button>
+  </nav>
+
+  <nav class="bottom-nav hidden" id="adminNav">
+    <button class="nav-btn active" data-admin-tab="dashboard"><span class="nav-icon">📊</span><span>Dashboard</span></button>
+    <button class="nav-btn" data-admin-tab="products"><span class="nav-icon">📦</span><span>Products</span></button>
+    <button class="nav-btn" data-admin-tab="orders"><span class="nav-icon">🧾</span><span>Orders</span></button>
+    <button class="nav-btn" data-admin-tab="categories"><span class="nav-icon">🏷️</span><span>Categories</span></button>
+    <button class="nav-btn" data-admin-tab="settings"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+  </nav>
+
+  <div class="toast-stack" id="toastStack"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modalContent"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      products: 'sf_products',
+      orders: 'sf_orders',
+      categories: 'sf_categories',
+      cart: 'sf_cart',
+      wishlist: 'sf_wishlist',
+      settings: 'sf_settings',
+      adminPass: 'sf_admin_pass',
+      profile: 'sf_profile'
+    };
+
+    const sampleProducts = [
+      { id: 'p1', name: 'Gul Ahmed Lawn 3-Piece', price: 3200, oldPrice: 5400, category: 'Lawn Suits', rating: 4.8, emoji: '🌸', description: 'Premium stitched lawn suit with matching dupatta and breathable fabric for festive summer wear.', flashSale: true, featured: true, stock: 9, sold: 62, colors: ['#f8c8dc','#c0395a','#f4d03f','#ffffff'] },
+      { id: 'p2', name: 'Bridal Lehenga Choli', price: 12500, oldPrice: 18000, category: 'Formal', rating: 4.9, emoji: '👑', description: 'Elegant bridal set with zari detailing, luxury lining, and a regal silhouette for wedding season.', flashSale: true, featured: true, stock: 3, sold: 81, colors: ['#8c1f38','#d4a853','#fdf6f0','#5d2e46'] },
+      { id: 'p3', name: 'Cotton Summer Kaftan', price: 1450, oldPrice: 2100, category: 'Dresses', rating: 4.6, emoji: '🌿', description: 'Relaxed-fit kaftan with soft cotton weave, breezy sleeves, and all-day comfort.', flashSale: false, featured: true, stock: 12, sold: 38, colors: ['#27ae60','#fdf6f0','#3498db','#111827'] },
+      { id: 'p4', name: 'Golden Embroidered Dress', price: 5800, oldPrice: 8200, category: 'Formal', rating: 4.7, emoji: '🌙', description: 'Statement dress with gold-thread embroidery, polished finish, and occasion-ready charm.', flashSale: true, featured: true, stock: 6, sold: 57, colors: ['#d4a853','#c0395a','#2c3e50','#ffffff'] },
+      { id: 'p5', name: 'Silk Printed Dupatta', price: 699, oldPrice: 1300, category: 'Dupatta', rating: 4.5, emoji: '🪷', description: 'Soft silk dupatta with signature print placement and light drape for effortless styling.', flashSale: false, featured: false, stock: 15, sold: 45, colors: ['#9b59b6','#f39c12','#e91e63','#fdf6f0'] },
+      { id: 'p6', name: 'Embroidered Handbag', price: 2200, oldPrice: 3500, category: 'Bags', rating: 4.4, emoji: '👜', description: 'Structured handbag with intricate embroidery, compact utility, and festive color accents.', flashSale: false, featured: true, stock: 7, sold: 29, colors: ['#8c1f38','#d4a853','#6b7280','#000000'] },
+      { id: 'p7', name: 'Kids Frock Set', price: 1800, oldPrice: 2800, category: 'Kids', rating: 4.7, emoji: '🎀', description: 'Adorable kids frock set with playful detailing, matching accessories, and easy care fabric.', flashSale: true, featured: false, stock: 11, sold: 51, colors: ['#ff9ff3','#54a0ff','#ffeaa7','#ffffff'] },
+      { id: 'p8', name: 'Pearl Jewelry Set', price: 950, oldPrice: 1800, category: 'Jewelry', rating: 4.6, emoji: '💍', description: 'Classic pearl jewelry set with polished finish and versatile styling for day or night events.', flashSale: false, featured: true, stock: 4, sold: 68, colors: ['#fdf6f0','#d4a853','#95a5a6','#ecf0f1'] }
+    ];
+
+    const sampleCategories = [
+      { id: 'c1', name: 'Dresses', emoji: '👗', visible: true },
+      { id: 'c2', name: 'Lawn Suits', emoji: '🌼', visible: true },
+      { id: 'c3', name: 'Formal', emoji: '✨', visible: true },
+      { id: 'c4', name: 'Bags', emoji: '👜', visible: true },
+      { id: 'c5', name: 'Jewelry', emoji: '💍', visible: true },
+      { id: 'c6', name: 'Dupatta', emoji: '🧣', visible: true },
+      { id: 'c7', name: 'Footwear', emoji: '👡', visible: true },
+      { id: 'c8', name: 'Kids', emoji: '🧒', visible: true }
+    ];
+
+    const defaultSettings = {
+      storeName: 'Samina Fashion Store',
+      domain: 'saminafashion.store',
+      whatsapp: '923001234567',
+      freeDeliveryMin: 1500,
+      promoCode: 'SAMINA10',
+      promoDiscount: 10,
+      flashHours: 2,
+      flashMinutes: 47
+    };
+
+    const sampleOrders = [
+      {
+        id: 'SF240301',
+        date: '2026-03-16T11:20:00Z',
+        items: [{ productId: 'p1', qty: 1, size: 'M', color: '#f8c8dc', price: 3200 }, { productId: 'p6', qty: 1, size: 'Standard', color: '#8c1f38', price: 2200 }],
+        customer: { name: 'Ayesha Khan', phone: '03001234567', city: 'Lahore', address: 'House 25, Johar Town, Lahore' },
+        paymentMethod: 'Cash on Delivery',
+        status: 'Processing',
+        total: 5400,
+        subtotal: 5400,
+        delivery: 0,
+        discount: 0
+      },
+      {
+        id: 'SF240302',
+        date: '2026-03-18T16:45:00Z',
+        items: [{ productId: 'p8', qty: 2, size: 'Standard', color: '#fdf6f0', price: 950 }],
+        customer: { name: 'Maham Ali', phone: '03119876543', city: 'Karachi', address: 'Flat 12, Gulshan-e-Iqbal, Karachi' },
+        paymentMethod: 'EasyPaisa',
+        status: 'Shipped',
+        total: 1900,
+        subtotal: 1900,
+        delivery: 0,
+        discount: 0
+      }
+    ];
+
+    const app = {
+      currentView: 'home',
+      currentAdminTab: 'dashboard',
+      historyStack: ['home'],
+      adminMode: false,
+      productDetailId: null,
+      shopFilters: { q: '', category: 'All', maxPrice: 20000, sort: 'popular' },
+      shopPageSize: 6,
+      shopPage: 1,
+      detailTab: 'details',
+      selectedSize: 'M',
+      selectedColor: '',
+      selectedQty: 1,
+      logoTaps: [],
+      countdownTarget: null,
+      testimonialIndex: 0,
+      pullState: { startY: 0, active: false, triggered: false },
+      editingProductId: null,
+      editingCategoryId: null,
+      orderFilter: 'All'
+    };
+
+    const views = {};
+
+    function seedStorage() {
+      if (!localStorage.getItem(STORAGE_KEYS.products)) localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(sampleProducts));
+      if (!localStorage.getItem(STORAGE_KEYS.categories)) localStorage.setItem(STORAGE_KEYS.categories, JSON.stringify(sampleCategories));
+      if (!localStorage.getItem(STORAGE_KEYS.orders)) localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(sampleOrders));
+      if (!localStorage.getItem(STORAGE_KEYS.cart)) localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify([]));
+      if (!localStorage.getItem(STORAGE_KEYS.wishlist)) localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify([]));
+      if (!localStorage.getItem(STORAGE_KEYS.settings)) localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(defaultSettings));
+      if (!localStorage.getItem(STORAGE_KEYS.adminPass)) localStorage.setItem(STORAGE_KEYS.adminPass, 'samina123');
+      if (!localStorage.getItem(STORAGE_KEYS.profile)) localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify({ name: 'Samina Customer', phone: '03XXXXXXXXX' }));
+    }
+
+    const getProducts = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.products) || '[]');
+    const saveProducts = (data) => localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(data));
+    const getOrders = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || '[]');
+    const saveOrders = (data) => localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(data));
+    const getCategories = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.categories) || '[]');
+    const saveCategories = (data) => localStorage.setItem(STORAGE_KEYS.categories, JSON.stringify(data));
+    const getCart = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.cart) || '[]');
+    const saveCart = (data) => localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(data));
+    const getWishlist = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.wishlist) || '[]');
+    const saveWishlist = (data) => localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify(data));
+    const getSettings = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.settings) || '{}');
+    const saveSettings = (data) => localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(data));
+    const getProfile = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.profile) || '{}');
+    const saveProfile = (data) => localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(data));
+
+    const fmt = (n) => `Rs.${Number(n || 0).toLocaleString('en-PK')}`;
+    const stars = (rating) => `★`.repeat(Math.round(rating)) + `☆`.repeat(5 - Math.round(rating));
+    const discountPct = (price, oldPrice) => Math.round(((oldPrice - price) / oldPrice) * 100);
+    const productById = (id) => getProducts().find(p => p.id === id);
+    const categoryEmoji = (name) => (getCategories().find(c => c.name === name) || {}).emoji || '✨';
+    const initials = (name) => (name || 'S').split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>'"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\'': '&#39;', '"': '&quot;' }[ch]));
+    }
+
+    function toast(message) {
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = message;
+      document.getElementById('toastStack').appendChild(el);
+      setTimeout(() => el.remove(), 2600);
+    }
+
+    function openModal(html) {
+      const backdrop = document.getElementById('modalBackdrop');
+      document.getElementById('modalContent').innerHTML = html;
+      backdrop.classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.remove('show');
+      document.getElementById('modalContent').innerHTML = '';
+      app.editingProductId = null;
+      app.editingCategoryId = null;
+    }
+
+    function updateBadges() {
+      const cartCount = getCart().reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cartBadge').textContent = cartCount;
+      document.getElementById('headerCartBtn').querySelector('.badge').textContent = cartCount;
+      document.getElementById('storeNameHeader').textContent = getSettings().storeName.replace(' Store', '');
+    }
+
+    function setCountdown() {
+      const settings = getSettings();
+      const now = Date.now();
+      app.countdownTarget = now + ((settings.flashHours * 60 + settings.flashMinutes) * 60 * 1000);
+    }
+
+    function startIntervals() {
+      setInterval(renderFlashCountdown, 1000);
+      setInterval(() => {
+        app.testimonialIndex = (app.testimonialIndex + 1) % 3;
+        const track = document.getElementById('testimonialTrack');
+        if (track) track.style.transform = `translateX(-${app.testimonialIndex * 100}%)`;
+      }, 3600);
+    }
+
+    function renderFlashCountdown() {
+      const el = document.getElementById('flashCountdown');
+      if (!el || !app.countdownTarget) return;
+      const diff = Math.max(0, app.countdownTarget - Date.now());
+      const hrs = Math.floor(diff / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      el.textContent = `${String(hrs).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
+      if (diff <= 0) setCountdown();
+    }
+
+    function renderAll() {
+      renderHome();
+      renderShop();
+      renderProductDetail();
+      renderCart();
+      renderCheckout();
+      renderOrders();
+      renderWishlist();
+      renderProfile();
+      renderAdmin();
+      updateBadges();
+      syncNavs();
+    }
+
+    function syncNavs() {
+      document.querySelectorAll('#customerNav .nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === app.currentView));
+      document.querySelectorAll('#adminNav .nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.adminTab === app.currentAdminTab));
+      document.getElementById('customerNav').classList.toggle('hidden', app.adminMode);
+      document.getElementById('adminNav').classList.toggle('hidden', !app.adminMode);
+      document.getElementById('customerHeader').classList.toggle('hidden', app.adminMode);
+      document.getElementById('whatsappBtn').classList.toggle('hidden', app.adminMode);
+      document.getElementById('appShell').classList.toggle('admin-mode', app.adminMode);
+    }
+
+    function showView(view, options = {}) {
+      app.currentView = view;
+      if (!options.skipHistory) {
+        app.historyStack.push(view);
+        history.pushState({ view, adminMode: app.adminMode }, '');
+      }
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById(`view-${view}`);
+      if (target) target.classList.add('active');
+      syncNavs();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function enterAdmin() {
+      app.adminMode = true;
+      app.currentView = 'admin';
+      showView('admin');
+      renderAdmin();
+      toast('Admin panel unlocked');
+    }
+
+    function exitAdmin() {
+      app.adminMode = false;
+      showView('home');
+      toast('Back to store');
+    }
+
+    function productCard(product, compact = false) {
+      const wish = getWishlist().includes(product.id);
+      return `
+        <div class="product-card ${compact ? 'flash-card' : ''}">
+          <button class="icon-btn heart-btn ${wish ? 'active' : ''}" style="position:absolute;right:12px;top:12px;z-index:2;width:36px;height:36px;border-radius:12px;" onclick="event.stopPropagation();toggleWishlist('${product.id}')">${wish ? '❤️' : '🤍'}</button>
+          <div onclick="openProduct('${product.id}')" style="cursor:pointer;display:grid;gap:10px;">
+            <div class="product-emoji">${product.emoji}</div>
+            <div class="small-badge">${categoryEmoji(product.category)} ${escapeHtml(product.category)}</div>
+            <div class="product-title">${escapeHtml(product.name)}</div>
+            <div class="price-row">
+              <span class="price">${fmt(product.price)}</span>
+              <span class="old-price">${fmt(product.oldPrice)}</span>
+            </div>
+            <div class="meta-row">
+              <span class="discount-badge">-${discountPct(product.price, product.oldPrice)}%</span>
+              <span><span class="stars">${stars(product.rating)}</span> ${product.rating}</span>
+            </div>
+            ${compact ? `<div class="progress"><span style="width:${product.sold}%"></span></div><div class="meta-row"><span>${product.sold}% sold</span><span>${product.stock} left</span></div>` : ''}
+          </div>
+          <div class="actions-row">
+            <button class="outline-btn w-full" onclick="quickAddToCart('${product.id}')">Add to Cart</button>
+          </div>
+        </div>`;
+    }
+
+    function renderHome() {
+      const settings = getSettings();
+      const products = getProducts();
+      const featured = products.filter(p => p.featured).slice(0, 6);
+      const flash = products.filter(p => p.flashSale).slice(0, 5);
+      const visibleCategories = getCategories().filter(c => c.visible);
+      views.home = document.getElementById('view-home');
+      views.home.innerHTML = `
+        <section class="hero">
+          <span class="tag">🌙 Festive Drop • ${escapeHtml(settings.domain)}</span>
+          <h2 id="heroAnimated" class="fade-text">Eid Collection Is Here!</h2>
+          <p>Luxury Pakistani fashion in a mobile-first boutique experience made for quick shopping.</p>
+          <div class="hero-cta">
+            <button class="primary-btn" onclick="showView('shop')">Shop Now</button>
+            <button class="ghost-btn" onclick="showView('wishlist')">View Wishlist</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h3>Shop by Category</h3><small>Swipe to explore</small></div>
+          <div class="chips-row">
+            ${visibleCategories.map(c => `<button class="chip-btn" onclick="filterCategory('${escapeHtml(c.name)}')">${c.emoji} ${escapeHtml(c.name)}</button>`).join('')}
+          </div>
+        </section>
+
+        <div class="promo-strip">
+          <div>
+            <strong>Free Delivery on ${fmt(settings.freeDeliveryMin)}+</strong>
+            <div class="mini-note">Use code <span class="promo-code">${escapeHtml(settings.promoCode)}</span> for ${settings.promoDiscount}% off</div>
+          </div>
+          <div>🚚</div>
+        </div>
+
+        <section class="section">
+          <div class="section-head"><h3>Flash Sale</h3><small class="countdown" id="flashCountdown">--</small></div>
+          <div class="scroll-row">${flash.map(p => productCard(p, true)).join('')}</div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h3>Featured Products</h3><small>Handpicked looks</small></div>
+          <div class="grid-2">${featured.map(p => productCard(p)).join('')}</div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h3>What Customers Say</h3><small>Loved across Pakistan</small></div>
+          <div class="card" style="overflow:hidden;">
+            <div class="testimonial-track" id="testimonialTrack">
+              <div class="testimonial-card">
+                <p>“Amazing stitching quality and the delivery was faster than expected. My Eid outfit looked premium!”</p>
+                <strong>— Sana, Islamabad</strong>
+              </div>
+              <div class="testimonial-card">
+                <p>“The admin-like order updates made it feel like a real shopping app. Loved the dupatta and jewelry combo.”</p>
+                <strong>— Hira, Karachi</strong>
+              </div>
+              <div class="testimonial-card">
+                <p>“Beautiful mobile shopping experience. Added to cart, paid COD, and shared on WhatsApp in minutes.”</p>
+                <strong>— Mehwish, Lahore</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="footer-card">
+          <h3 style="margin:0 0 8px;font:700 1.2rem 'Playfair Display', serif;">Stay connected with ${escapeHtml(settings.storeName)}</h3>
+          <div class="footer-links">
+            <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+            <a href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a>
+            <a href="https://tiktok.com" target="_blank" rel="noreferrer">TikTok</a>
+            <a href="javascript:void(0)" onclick="promptAdmin()" class="hidden-admin-trigger">Admin</a>
+          </div>
+          <button class="wa-btn" style="position:static;margin-top:16px;" onclick="openWhatsappGeneral()">💬 Chat on WhatsApp</button>
+        </section>
+      `;
+      renderFlashCountdown();
+      animateHeroText();
+    }
+
+    function animateHeroText() {
+      const phrases = ['Eid Collection Is Here!', 'Luxury Looks, Local Love!', 'Flash Sale Ends Soon!'];
+      let idx = 0;
+      const el = document.getElementById('heroAnimated');
+      if (!el) return;
+      clearInterval(window.heroInterval);
+      window.heroInterval = setInterval(() => {
+        idx = (idx + 1) % phrases.length;
+        el.style.opacity = '0.2';
+        setTimeout(() => {
+          el.textContent = phrases[idx];
+          el.style.opacity = '1';
+        }, 180);
+      }, 2600);
+    }
+
+    function getFilteredProducts() {
+      const { q, category, maxPrice, sort } = app.shopFilters;
+      let items = getProducts().filter(p => p.price <= Number(maxPrice || 999999));
+      if (category !== 'All') items = items.filter(p => p.category === category);
+      if (q.trim()) items = items.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.category.toLowerCase().includes(q.toLowerCase()));
+      items.sort((a, b) => {
+        if (sort === 'newest') return b.id.localeCompare(a.id);
+        if (sort === 'low-high') return a.price - b.price;
+        if (sort === 'popular') return (b.sold || 0) - (a.sold || 0);
+        return 0;
+      });
+      return items;
+    }
+
+    function renderShop() {
+      const items = getFilteredProducts();
+      const categories = ['All', ...getCategories().map(c => c.name)];
+      const rendered = items.slice(0, app.shopPage * app.shopPageSize);
+      views.shop = document.getElementById('view-shop');
+      views.shop.innerHTML = `
+        <section class="section" style="margin-top:0;">
+          <div class="section-head"><h3>Search & Categories</h3><small>${items.length} items found</small></div>
+          <div class="filters">
+            <select class="filter-pill" onchange="updateShopFilter('maxPrice', this.value)">
+              <option value="20000" ${app.shopFilters.maxPrice == 20000 ? 'selected' : ''}>Any Price</option>
+              <option value="1000" ${app.shopFilters.maxPrice == 1000 ? 'selected' : ''}>Under 1,000</option>
+              <option value="3000" ${app.shopFilters.maxPrice == 3000 ? 'selected' : ''}>Under 3,000</option>
+              <option value="7000" ${app.shopFilters.maxPrice == 7000 ? 'selected' : ''}>Under 7,000</option>
+            </select>
+            <select class="filter-pill" onchange="updateShopFilter('category', this.value)">
+              ${categories.map(c => `<option value="${escapeHtml(c)}" ${app.shopFilters.category === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+            </select>
+            <select class="filter-pill" onchange="updateShopFilter('sort', this.value)">
+              <option value="popular" ${app.shopFilters.sort === 'popular' ? 'selected' : ''}>Popular</option>
+              <option value="newest" ${app.shopFilters.sort === 'newest' ? 'selected' : ''}>Newest</option>
+              <option value="low-high" ${app.shopFilters.sort === 'low-high' ? 'selected' : ''}>Low-High</option>
+            </select>
+          </div>
+        </section>
+        <section class="section">
+          <div class="grid-2" id="shopGrid">
+            ${rendered.length ? rendered.map(p => productCard(p)).join('') : `<div class="empty-state card" style="grid-column:1 / -1;"><div class="emoji">🛍️</div><strong>No products found</strong><div>Try a different keyword or reset filters.</div></div>`}
+          </div>
+          ${rendered.length < items.length ? `<button class="outline-btn w-full" style="margin-top:12px;" onclick="loadMoreProducts()">Load More</button>` : ''}
+        </section>
+      `;
+    }
+
+    function renderProductDetail() {
+      const product = productById(app.productDetailId) || getProducts()[0];
+      if (!product) return;
+      app.productDetailId = product.id;
+      if (!app.selectedColor) app.selectedColor = product.colors[0] || '#c0395a';
+      const related = getProducts().filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+      const panels = {
+        details: product.description,
+        reviews: 'Rated highly for fabric quality, sizing comfort, and elegant presentation. Customers love the festive finish and repeat-buy value.',
+        shipping: `Nationwide delivery in 2-5 working days. Free delivery on orders above ${fmt(getSettings().freeDeliveryMin)}. Cash on Delivery supported.`
+      };
+      views.product = document.getElementById('view-product');
+      views.product.innerHTML = `
+        <div class="product-detail-image" id="swipeImage">
+          <div>${product.emoji}</div>
+          <div class="swipe-hint">← Swipe colors →</div>
+        </div>
+        <section class="section">
+          <div class="small-badge">${categoryEmoji(product.category)} ${escapeHtml(product.category)}</div>
+          <div class="section-head" style="margin-top:10px;"><h3>${escapeHtml(product.name)}</h3><span class="discount-badge">-${discountPct(product.price, product.oldPrice)}%</span></div>
+          <div class="price-row"><span class="price" style="font-size:1.28rem;">${fmt(product.price)}</span><span class="old-price">${fmt(product.oldPrice)}</span></div>
+          <div class="meta-row"><span><span class="stars">${stars(product.rating)}</span> ${product.rating}</span><span>${product.stock} in stock</span></div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h3>Select Size</h3><small>Ready-to-wear</small></div>
+          <div class="selector-row">${['S','M','L','XL','XXL'].map(size => `<button class="size-btn ${app.selectedSize === size ? 'active' : ''}" onclick="setSize('${size}')">${size}</button>`).join('')}</div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h3>Select Color</h3><small>Swipe image too</small></div>
+          <div class="selector-row">${product.colors.map(color => `<button class="color-btn ${app.selectedColor === color ? 'active' : ''}" style="background:${color};" onclick="setColor('${color}')"></button>`).join('')}</div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h3>Quantity</h3><small>Choose your fit</small></div>
+          <div class="qty-box"><button class="qty-btn" onclick="changeDetailQty(-1)">−</button><strong>${app.selectedQty}</strong><button class="qty-btn" onclick="changeDetailQty(1)">+</button></div>
+        </section>
+        <section class="section">
+          <div class="actions-row">
+            <button class="outline-btn w-full" onclick="addDetailToCart()">Add to Cart</button>
+            <button class="primary-btn w-full" onclick="buyNow()">Buy Now</button>
+          </div>
+        </section>
+        <section class="section">
+          <div class="tabs-row">
+            ${['details','reviews','shipping'].map(tab => `<button class="tab-btn ${app.detailTab === tab ? 'active' : ''}" onclick="setDetailTab('${tab}')">${tab[0].toUpperCase() + tab.slice(1)}</button>`).join('')}
+          </div>
+          <div class="tab-panel" style="margin-top:10px;">${escapeHtml(panels[app.detailTab])}</div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h3>Related Products</h3><small>You may also like</small></div>
+          <div class="scroll-row">${related.map(p => productCard(p, true)).join('') || `<div class="empty-state card" style="min-width:100%;"><div class="emoji">✨</div><div>More styles coming soon.</div></div>`}</div>
+        </section>
+      `;
+      bindSwipe(product.colors);
+    }
+
+    function cartEnriched() {
+      return getCart().map(item => ({ ...item, product: productById(item.productId) })).filter(x => x.product);
+    }
+
+    function calculateCartTotals() {
+      const settings = getSettings();
+      const cart = cartEnriched();
+      const subtotal = cart.reduce((sum, item) => sum + item.qty * item.product.price, 0);
+      const promo = localStorage.getItem('sf_applied_promo') === settings.promoCode ? settings.promoDiscount : 0;
+      const discount = Math.round(subtotal * (promo / 100));
+      const delivery = subtotal > 0 && subtotal < settings.freeDeliveryMin ? 200 : 0;
+      return { subtotal, discount, delivery, total: subtotal + delivery - discount };
+    }
+
+    function renderCart() {
+      const cart = cartEnriched();
+      const totals = calculateCartTotals();
+      views.cart = document.getElementById('view-cart');
+      views.cart.innerHTML = cart.length ? `
+        <section class="section" style="margin-top:0;">
+          <div class="section-head"><h3>Your Cart</h3><small>${cart.length} item(s)</small></div>
+          <div class="list-stack">
+            ${cart.map(item => `
+              <div class="card cart-item">
+                <div class="thumb">${item.product.emoji}</div>
+                <div class="cart-meta">
+                  <div class="line-between">
+                    <h4>${escapeHtml(item.product.name)}</h4>
+                    <button class="tiny-btn" onclick="removeFromCart('${item.productId}','${item.size}','${item.color}')">Remove</button>
+                  </div>
+                  <div class="muted">Size: ${escapeHtml(item.size)} • Color: <span style="display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-2px;background:${item.color};"></span></div>
+                  <div class="line-between" style="margin-top:8px;">
+                    <strong>${fmt(item.product.price)}</strong>
+                    <div class="qty-box"><button class="qty-btn" onclick="changeCartQty('${item.productId}','${item.size}','${item.color}',-1)">−</button><strong>${item.qty}</strong><button class="qty-btn" onclick="changeCartQty('${item.productId}','${item.size}','${item.color}',1)">+</button></div>
+                  </div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </section>
+        <section class="section">
+          <div class="card summary-box">
+            <div class="line-between"><span>Subtotal</span><strong>${fmt(totals.subtotal)}</strong></div>
+            <div class="line-between"><span>Delivery</span><strong>${totals.delivery ? fmt(totals.delivery) : 'Free'}</strong></div>
+            <div class="line-between"><span>Discount</span><strong>- ${fmt(totals.discount)}</strong></div>
+            <div class="line-between total"><span>Total</span><strong>${fmt(totals.total)}</strong></div>
+            <div class="actions-row">
+              <input class="field" id="promoCodeInput" placeholder="Promo code" value="${escapeHtml(localStorage.getItem('sf_applied_promo') || '')}" />
+              <button class="outline-btn" onclick="applyPromo()">Apply</button>
+            </div>
+            <button class="primary-btn w-full" onclick="showView('checkout')">Proceed to Checkout</button>
+          </div>
+        </section>
+      ` : `<div class="empty-state card" style="margin-top:10px;"><div class="emoji">🛒</div><strong>Your cart is empty</strong><div>Add some gorgeous pieces and come back here.</div><button class="primary-btn" onclick="showView('shop')">Start Shopping</button></div>`;
+    }
+
+    function renderCheckout() {
+      const profile = getProfile();
+      const totals = calculateCartTotals();
+      const cart = cartEnriched();
+      views.checkout = document.getElementById('view-checkout');
+      views.checkout.innerHTML = cart.length ? `
+        <section class="section" style="margin-top:0;">
+          <div class="section-head"><h3>Checkout</h3><small>Safe & simple</small></div>
+          <div class="form-grid">
+            <input class="field" id="checkoutName" placeholder="Full Name" value="${escapeHtml(profile.name || '')}" />
+            <input class="field" id="checkoutPhone" placeholder="Phone" value="${escapeHtml(profile.phone || '')}" />
+            <input class="field" id="checkoutCity" placeholder="City" />
+            <textarea id="checkoutAddress" placeholder="Full Address"></textarea>
+          </div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h3>Payment Method</h3><small>Choose one</small></div>
+          <div class="list-stack">
+            ${['Cash on Delivery','EasyPaisa','Bank Transfer'].map((method, idx) => `
+              <label class="card" style="padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                <input type="radio" name="paymentMethod" value="${method}" ${idx === 0 ? 'checked' : ''} />
+                <span>${method}</span>
+              </label>`).join('')}
+          </div>
+        </section>
+        <section class="section">
+          <div class="accordion-card open" id="orderSummaryAccordion">
+            <div class="accordion-head" onclick="toggleAccordion('orderSummaryAccordion')"><h4>Order Summary</h4><span>⌄</span></div>
+            <div class="accordion-body">
+              ${cart.map(item => `<div class="line-between" style="padding:6px 0;"><span>${item.product.emoji} ${escapeHtml(item.product.name)} × ${item.qty}</span><strong>${fmt(item.qty * item.product.price)}</strong></div>`).join('')}
+              <div class="line-between total"><span>Total</span><strong>${fmt(totals.total)}</strong></div>
+            </div>
+          </div>
+        </section>
+        <section class="section">
+          <button class="primary-btn w-full" onclick="placeOrder()">Place Order</button>
+        </section>
+      ` : `<div class="empty-state card" style="margin-top:10px;"><div class="emoji">📦</div><strong>No items to checkout</strong><div>Your order summary will appear here once you add products.</div><button class="primary-btn" onclick="showView('shop')">Browse products</button></div>`;
+    }
+
+    function renderOrders() {
+      const orders = getOrders().slice().sort((a,b) => new Date(b.date) - new Date(a.date));
+      views.orders = document.getElementById('view-orders');
+      views.orders.innerHTML = orders.length ? `
+        <section class="section" style="margin-top:0;">
+          <div class="section-head"><h3>My Orders</h3><small>${orders.length} order(s)</small></div>
+          <div class="list-stack">
+            ${orders.map((order, index) => {
+              const itemsCount = order.items.reduce((sum, item) => sum + item.qty, 0);
+              return `
+                <div class="accordion-card ${index === 0 ? 'open' : ''}" id="order-${order.id}">
+                  <div class="accordion-head" onclick="toggleAccordion('order-${order.id}')">
+                    <div>
+                      <h4>${order.id}</h4>
+                      <div class="mini-note">${new Date(order.date).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })} • ${itemsCount} item(s)</div>
+                    </div>
+                    <div class="right">
+                      <div class="status-badge ${order.status.toLowerCase()}">${order.status}</div>
+                      <strong>${fmt(order.total)}</strong>
+                    </div>
+                  </div>
+                  <div class="accordion-body">
+                    <div class="order-summary">
+                      <div>Customer: ${escapeHtml(order.customer.name)}</div>
+                      <div>Phone: ${escapeHtml(order.customer.phone)}</div>
+                      <div>Payment: ${escapeHtml(order.paymentMethod)}</div>
+                      <div>Address: ${escapeHtml(order.customer.address)}, ${escapeHtml(order.customer.city)}</div>
+                      ${order.items.map(it => {
+                        const p = productById(it.productId) || { name: 'Product' };
+                        return `<div>• ${escapeHtml(p.name)} × ${it.qty} (${escapeHtml(it.size)})</div>`;
+                      }).join('')}
+                    </div>
+                  </div>
+                </div>`;
+            }).join('')}
+          </div>
+        </section>
+      ` : `<div class="empty-state card" style="margin-top:10px;"><div class="emoji">📭</div><strong>No orders yet</strong><div>Place your first order and it will appear here.</div></div>`;
+    }
+
+    function renderWishlist() {
+      const wishlistIds = getWishlist();
+      const products = wishlistIds.map(productById).filter(Boolean);
+      views.wishlist = document.getElementById('view-wishlist');
+      views.wishlist.innerHTML = products.length ? `
+        <section class="section" style="margin-top:0;">
+          <div class="section-head"><h3>Wishlist</h3><small>${products.length} saved</small></div>
+          <div class="grid-2">${products.map(p => `
+            <div class="product-card">
+              <div class="product-emoji" onclick="openProduct('${p.id}')">${p.emoji}</div>
+              <div class="product-title">${escapeHtml(p.name)}</div>
+              <div class="price">${fmt(p.price)}</div>
+              <div class="actions-row">
+                <button class="outline-btn w-full" onclick="quickAddToCart('${p.id}')">Move to Cart</button>
+              </div>
+            </div>`).join('')}</div>
+        </section>
+      ` : `<div class="empty-state card" style="margin-top:10px;"><div class="emoji">💖</div><strong>Your wishlist is empty</strong><div>Tap the heart icon on products to save them here.</div><button class="primary-btn" onclick="showView('shop')">Explore styles</button></div>`;
+    }
+
+    function renderProfile() {
+      const profile = getProfile();
+      const settings = getSettings();
+      views.profile = document.getElementById('view-profile');
+      views.profile.innerHTML = `
+        <section class="profile-card" style="margin-top:0;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="thumb" style="width:70px;height:70px;border-radius:22px;font-size:1.4rem;">${initials(profile.name)}</div>
+            <div>
+              <h4>${escapeHtml(profile.name || 'Your Name')}</h4>
+              <div class="muted">${escapeHtml(profile.phone || 'Phone not set')}</div>
+            </div>
+          </div>
+        </section>
+        <section class="section">
+          <div class="link-list">
+            <div class="link-item" onclick="showView('orders')"><span>📦 My Orders</span><strong>›</strong></div>
+            <div class="link-item" onclick="showView('wishlist')"><span>💖 Wishlist</span><strong>›</strong></div>
+            <a class="link-item" style="text-decoration:none;color:inherit;" href="https://wa.me/${settings.whatsapp}" target="_blank" rel="noreferrer"><span>💬 Contact Us</span><strong>›</strong></a>
+          </div>
+        </section>
+        <section class="section">
+          <div class="profile-card">
+            <h4>About Store</h4>
+            <p class="muted">${escapeHtml(settings.storeName)} brings mobile-first Pakistani fashion shopping with curated festive wear, quick ordering, and seamless local delivery updates.</p>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderAdmin() {
+      views.admin = document.getElementById('view-admin');
+      views.admin.innerHTML = `
+        <div class="admin-header">
+          <div>
+            <div class="small-badge">🔐 Admin Panel</div>
+            <h3 style="margin:8px 0 0;font:700 1.25rem 'Playfair Display', serif;">Manage ${escapeHtml(getSettings().storeName)}</h3>
+          </div>
+          <button class="outline-btn" onclick="exitAdmin()">Exit</button>
+        </div>
+        <section class="admin-panel">${renderAdminTab()}</section>
+      `;
+    }
+
+    function renderAdminTab() {
+      const orders = getOrders();
+      const products = getProducts();
+      if (app.currentAdminTab === 'dashboard') {
+        const revenue = orders.reduce((sum, o) => sum + o.total, 0);
+        const pending = orders.filter(o => o.status === 'Pending').length;
+        const lowStock = products.filter(p => p.stock < 5);
+        return `
+          <div class="section">
+            <div class="stats-grid">
+              <div class="stat-card"><span>Total Orders</span><strong>${orders.length}</strong></div>
+              <div class="stat-card"><span>Total Revenue</span><strong>${fmt(revenue)}</strong></div>
+              <div class="stat-card"><span>Pending Orders</span><strong>${pending}</strong></div>
+              <div class="stat-card"><span>Total Products</span><strong>${products.length}</strong></div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-head"><h3>Recent Orders</h3><small>Last 5</small></div>
+            <div class="list-stack">${orders.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5).map(o => `
+              <div class="order-card">
+                <div class="line-between"><h4>${o.id}</h4><div class="status-badge ${o.status.toLowerCase()}">${o.status}</div></div>
+                <div class="muted">${escapeHtml(o.customer.name)} • ${fmt(o.total)}</div>
+              </div>`).join('')}</div>
+          </div>
+          <div class="section">
+            <div class="section-head"><h3>Low Stock Alert</h3><small>${lowStock.length} item(s)</small></div>
+            ${lowStock.length ? `<div class="list-stack">${lowStock.map(p => `<div class="admin-card"><strong>${p.emoji} ${escapeHtml(p.name)}</strong><div class="muted">Only ${p.stock} left in stock</div></div>`).join('')}</div>` : `<div class="empty-state card"><div class="emoji">✅</div><div>No low stock alerts right now.</div></div>`}
+          </div>`;
+      }
+      if (app.currentAdminTab === 'products') {
+        const query = (document.getElementById('adminProductSearch') || {}).value || '';
+        const list = products.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+        return `
+          <div class="section">
+            <div class="actions-row" style="margin-bottom:12px;">
+              <input class="field" id="adminProductSearch" placeholder="Search products" oninput="renderAdmin()" value="${escapeHtml(query)}" />
+              <button class="primary-btn" onclick="openProductForm()">Add New Product</button>
+            </div>
+            <div class="list-stack">
+              ${list.map(p => `<div class="admin-product-row">
+                <div class="thumb" style="width:56px;height:56px;">${p.emoji}</div>
+                <div>
+                  <div class="line-between"><h4>${escapeHtml(p.name)}</h4><span class="small-badge">${p.stock > 0 ? 'Active' : 'Out'}</span></div>
+                  <div class="muted">${fmt(p.price)} • Stock ${p.stock} • ${escapeHtml(p.category)}</div>
+                  <div class="row-actions" style="margin-top:8px;">
+                    <button class="tiny-btn" onclick="openProductForm('${p.id}')">Edit</button>
+                    <button class="tiny-btn" onclick="deleteProduct('${p.id}')">Delete</button>
+                  </div>
+                </div>
+              </div>`).join('')}
+            </div>
+          </div>`;
+      }
+      if (app.currentAdminTab === 'orders') {
+        const filtered = app.orderFilter === 'All' ? orders : orders.filter(o => o.status === app.orderFilter);
+        return `
+          <div class="section">
+            <div class="admin-filter-row">
+              ${['All','Pending','Processing','Shipped','Delivered'].map(status => `<button class="status-chip ${app.orderFilter === status ? 'active' : ''}" onclick="setOrderFilter('${status}')">${status}</button>`).join('')}
+            </div>
+          </div>
+          <div class="section">
+            <div class="list-stack">
+              ${filtered.map((o, idx) => `
+                <div class="accordion-card ${idx === 0 ? 'open' : ''}" id="admin-order-${o.id}">
+                  <div class="accordion-head" onclick="toggleAccordion('admin-order-${o.id}')">
+                    <div>
+                      <h4>${o.id}</h4>
+                      <div class="mini-note">${escapeHtml(o.customer.name)} • ${escapeHtml(o.customer.phone)} • ${escapeHtml(o.customer.city)}</div>
+                    </div>
+                    <div class="right"><div class="status-badge ${o.status.toLowerCase()}">${o.status}</div><strong>${fmt(o.total)}</strong></div>
+                  </div>
+                  <div class="accordion-body">
+                    <div class="order-summary">
+                      <div>Date: ${new Date(o.date).toLocaleString('en-PK')}</div>
+                      <div>Address: ${escapeHtml(o.customer.address)}</div>
+                      <div>Payment: ${escapeHtml(o.paymentMethod)}</div>
+                      <div>Items: ${o.items.map(it => `${(productById(it.productId) || {name:'Product'}).name} × ${it.qty}`).join(', ')}</div>
+                      <div class="actions-row" style="margin-top:8px;">
+                        <select class="field" onchange="updateOrderStatus('${o.id}', this.value)">
+                          ${['Pending','Processing','Shipped','Delivered'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>`).join('') || `<div class="empty-state card"><div class="emoji">📭</div><div>No orders in this status.</div></div>`}
+            </div>
+          </div>`;
+      }
+      if (app.currentAdminTab === 'categories') {
+        const categories = getCategories();
+        return `
+          <div class="section">
+            <div class="actions-row" style="margin-bottom:12px;"><button class="primary-btn" onclick="openCategoryForm()">Add Category</button></div>
+            <div class="list-stack">
+              ${categories.map(c => `<div class="category-row">
+                <div class="line-between">
+                  <strong>${c.emoji} ${escapeHtml(c.name)}</strong>
+                  <div class="toggle ${c.visible ? 'active' : ''}" onclick="toggleCategoryVisibility('${c.id}')"></div>
+                </div>
+                <div class="row-actions">
+                  <button class="tiny-btn" onclick="openCategoryForm('${c.id}')">Edit</button>
+                  <button class="tiny-btn" onclick="deleteCategory('${c.id}')">Delete</button>
+                </div>
+              </div>`).join('')}
+            </div>
+          </div>`;
+      }
+      const settings = getSettings();
+      return `
+        <div class="section">
+          <div class="form-grid">
+            <input class="field" id="settingStoreName" placeholder="Store Name" value="${escapeHtml(settings.storeName)}" />
+            <input class="field" id="settingWhatsapp" placeholder="WhatsApp Number" value="${escapeHtml(settings.whatsapp)}" />
+            <input class="field" id="settingFreeDelivery" type="number" placeholder="Free Delivery Minimum" value="${settings.freeDeliveryMin}" />
+            <input class="field" id="settingPromoCode" placeholder="Promo Code" value="${escapeHtml(settings.promoCode)}" />
+            <input class="field" id="settingPromoDiscount" type="number" placeholder="Promo Discount %" value="${settings.promoDiscount}" />
+            <div class="actions-row">
+              <input class="field" id="settingFlashHours" type="number" placeholder="Flash Hours" value="${settings.flashHours}" />
+              <input class="field" id="settingFlashMinutes" type="number" placeholder="Flash Minutes" value="${settings.flashMinutes}" />
+            </div>
+            <input class="field" id="settingAdminPassword" placeholder="Change Admin Password" value="" />
+            <button class="primary-btn w-full" onclick="saveAdminSettings()">Save Settings</button>
+          </div>
+        </div>`;
+    }
+
+    function openProduct(id) {
+      app.productDetailId = id;
+      app.selectedQty = 1;
+      app.selectedSize = 'M';
+      app.selectedColor = (productById(id) || {}).colors?.[0] || '#c0395a';
+      renderProductDetail();
+      showView('product');
+    }
+
+    function quickAddToCart(id) {
+      const product = productById(id);
+      if (!product) return;
+      addToCart(product.id, 'M', product.colors[0] || '#c0395a', 1);
+    }
+
+    function addToCart(productId, size, color, qty) {
+      const cart = getCart();
+      const existing = cart.find(item => item.productId === productId && item.size === size && item.color === color);
+      if (existing) existing.qty += qty;
+      else cart.push({ productId, size, color, qty });
+      saveCart(cart);
+      updateBadges();
+      renderCart();
+      renderCheckout();
+      toast('Added to cart');
+    }
+
+    function addDetailToCart() {
+      addToCart(app.productDetailId, app.selectedSize, app.selectedColor, app.selectedQty);
+    }
+
+    function buyNow() {
+      addDetailToCart();
+      showView('checkout');
+    }
+
+    function removeFromCart(productId, size, color) {
+      saveCart(getCart().filter(item => !(item.productId === productId && item.size === size && item.color === color)));
+      renderCart();
+      renderCheckout();
+      updateBadges();
+      toast('Item removed');
+    }
+
+    function changeCartQty(productId, size, color, delta) {
+      const cart = getCart();
+      const item = cart.find(i => i.productId === productId && i.size === size && i.color === color);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) return removeFromCart(productId, size, color);
+      saveCart(cart);
+      renderCart();
+      renderCheckout();
+      updateBadges();
+    }
+
+    function changeDetailQty(delta) {
+      app.selectedQty = Math.max(1, app.selectedQty + delta);
+      renderProductDetail();
+    }
+
+    function setSize(size) { app.selectedSize = size; renderProductDetail(); }
+    function setColor(color) { app.selectedColor = color; renderProductDetail(); }
+    function setDetailTab(tab) { app.detailTab = tab; renderProductDetail(); }
+    function toggleAccordion(id) { document.getElementById(id)?.classList.toggle('open'); }
+
+    function applyPromo() {
+      const code = (document.getElementById('promoCodeInput') || {}).value?.trim().toUpperCase();
+      const settings = getSettings();
+      if (code === settings.promoCode.toUpperCase()) {
+        localStorage.setItem('sf_applied_promo', settings.promoCode);
+        toast('Promo code applied');
+      } else {
+        localStorage.removeItem('sf_applied_promo');
+        toast('Invalid promo code');
+      }
+      renderCart();
+      renderCheckout();
+    }
+
+    function placeOrder() {
+      const name = document.getElementById('checkoutName')?.value.trim();
+      const phone = document.getElementById('checkoutPhone')?.value.trim();
+      const city = document.getElementById('checkoutCity')?.value.trim();
+      const address = document.getElementById('checkoutAddress')?.value.trim();
+      if (!name || !phone || !city || !address) return toast('Please fill all checkout fields');
+      const cart = getCart();
+      if (!cart.length) return toast('Your cart is empty');
+      const totals = calculateCartTotals();
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'Cash on Delivery';
+      const order = {
+        id: `SF${Date.now().toString().slice(-6)}`,
+        date: new Date().toISOString(),
+        items: cart.map(item => ({ ...item, price: productById(item.productId)?.price || 0 })),
+        customer: { name, phone, city, address },
+        paymentMethod,
+        status: 'Pending',
+        total: totals.total,
+        subtotal: totals.subtotal,
+        delivery: totals.delivery,
+        discount: totals.discount
+      };
+      const orders = [order, ...getOrders()];
+      saveOrders(orders);
+      saveProfile({ name, phone });
+      saveCart([]);
+      localStorage.removeItem('sf_applied_promo');
+      renderAll();
+      openModal(`
+        <div class="modal-head"><h3 style="margin:0;">Order Confirmed</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+        <div class="order-success">
+          <div class="emoji">🎉</div>
+          <h3>Your order has been placed!</h3>
+          <p>Order ID: <strong>${order.id}</strong></p>
+          <div class="actions-row" style="margin-top:14px;justify-content:center;">
+            <button class="outline-btn" onclick="sendOrderWhatsapp('${order.id}')">WhatsApp Order</button>
+            <button class="primary-btn" onclick="closeModal();showView('orders')">My Orders</button>
+          </div>
+        </div>`);
+      toast('Order placed successfully');
+      showView('orders');
+    }
+
+    function sendOrderWhatsapp(orderId) {
+      const order = getOrders().find(o => o.id === orderId);
+      if (!order) return;
+      const msg = encodeURIComponent(`Assalam o Alaikum! I placed order ${order.id} at ${getSettings().storeName}. Total: ${fmt(order.total)}. Payment: ${order.paymentMethod}.`);
+      window.open(`https://wa.me/${getSettings().whatsapp}?text=${msg}`, '_blank');
+    }
+
+    function openWhatsappGeneral() {
+      const msg = encodeURIComponent(`Assalam o Alaikum! I'm interested in shopping from ${getSettings().storeName} (${getSettings().domain}).`);
+      window.open(`https://wa.me/${getSettings().whatsapp}?text=${msg}`, '_blank');
+    }
+
+    function filterCategory(category) {
+      app.shopFilters.category = category;
+      app.shopPage = 1;
+      renderShop();
+      showView('shop');
+    }
+
+    function updateShopFilter(key, value) {
+      app.shopFilters[key] = value;
+      app.shopPage = 1;
+      renderShop();
+    }
+
+    function loadMoreProducts() {
+      app.shopPage += 1;
+      renderShop();
+    }
+
+    function toggleWishlist(id) {
+      const wish = getWishlist();
+      const index = wish.indexOf(id);
+      if (index >= 0) { wish.splice(index, 1); toast('Removed from wishlist'); }
+      else { wish.push(id); toast('Saved to wishlist'); }
+      saveWishlist(wish);
+      renderHome(); renderShop(); renderWishlist(); renderProductDetail();
+    }
+
+    function bindSwipe(colors) {
+      const el = document.getElementById('swipeImage');
+      if (!el || !colors?.length) return;
+      let startX = 0;
+      el.ontouchstart = (e) => { startX = e.touches[0].clientX; };
+      el.ontouchend = (e) => {
+        const diff = e.changedTouches[0].clientX - startX;
+        const idx = colors.indexOf(app.selectedColor);
+        if (Math.abs(diff) < 30) return;
+        let next = idx;
+        if (diff < 0) next = (idx + 1) % colors.length;
+        else next = (idx - 1 + colors.length) % colors.length;
+        app.selectedColor = colors[next];
+        renderProductDetail();
+      };
+      el.style.boxShadow = `inset 0 0 0 6px ${app.selectedColor}`;
+    }
+
+    function promptAdmin() {
+      openModal(`
+        <div class="modal-head"><h3 style="margin:0;">Admin Login</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+        <div class="form-grid">
+          <input class="field" id="adminPassInput" type="password" placeholder="Enter password" />
+          <button class="primary-btn w-full" onclick="verifyAdmin()">Unlock Admin Panel</button>
+        </div>`);
+    }
+
+    function verifyAdmin() {
+      const pass = document.getElementById('adminPassInput')?.value;
+      if (pass === localStorage.getItem(STORAGE_KEYS.adminPass)) {
+        closeModal();
+        enterAdmin();
+      } else {
+        toast('Incorrect password');
+      }
+    }
+
+    function handleLogoTap() {
+      const now = Date.now();
+      app.logoTaps = app.logoTaps.filter(t => now - t < 2200);
+      app.logoTaps.push(now);
+      if (app.logoTaps.length >= 5) {
+        app.logoTaps = [];
+        promptAdmin();
+      }
+    }
+
+    function setAdminTab(tab) {
+      app.currentAdminTab = tab;
+      renderAdmin();
+      syncNavs();
+    }
+
+    function openProductForm(id = '') {
+      app.editingProductId = id || null;
+      const product = id ? productById(id) : { name: '', category: getCategories()[0]?.name || 'Dresses', price: '', oldPrice: '', stock: '', description: '', emoji: '✨', flashSale: false, featured: false };
+      openModal(`
+        <div class="modal-head"><h3 style="margin:0;">${id ? 'Edit' : 'Add'} Product</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+        <div class="form-grid">
+          <input class="field" id="pfName" placeholder="Product Name" value="${escapeHtml(product.name)}" />
+          <select class="field" id="pfCategory">${getCategories().map(c => `<option value="${escapeHtml(c.name)}" ${product.category === c.name ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('')}</select>
+          <input class="field" id="pfPrice" type="number" placeholder="Price" value="${product.price}" />
+          <input class="field" id="pfOldPrice" type="number" placeholder="Old Price" value="${product.oldPrice}" />
+          <input class="field" id="pfStock" type="number" placeholder="Stock Quantity" value="${product.stock}" />
+          <textarea id="pfDescription" placeholder="Description">${escapeHtml(product.description)}</textarea>
+          <input class="field" id="pfEmoji" placeholder="Emoji" value="${escapeHtml(product.emoji)}" />
+          <label class="link-item"><span>Flash Sale</span><input id="pfFlash" type="checkbox" ${product.flashSale ? 'checked' : ''} /></label>
+          <label class="link-item"><span>Featured</span><input id="pfFeatured" type="checkbox" ${product.featured ? 'checked' : ''} /></label>
+          <button class="primary-btn w-full" onclick="saveProductForm()">Save Product</button>
+        </div>`);
+    }
+
+    function saveProductForm() {
+      const products = getProducts();
+      const payload = {
+        id: app.editingProductId || `p${Date.now()}`,
+        name: document.getElementById('pfName').value.trim(),
+        category: document.getElementById('pfCategory').value,
+        price: Number(document.getElementById('pfPrice').value),
+        oldPrice: Number(document.getElementById('pfOldPrice').value),
+        stock: Number(document.getElementById('pfStock').value),
+        description: document.getElementById('pfDescription').value.trim(),
+        emoji: document.getElementById('pfEmoji').value.trim() || '✨',
+        flashSale: document.getElementById('pfFlash').checked,
+        featured: document.getElementById('pfFeatured').checked,
+        rating: 4.6,
+        sold: Math.floor(Math.random() * 70) + 10,
+        colors: ['#c0395a', '#d4a853', '#fdf6f0', '#2d3748']
+      };
+      if (!payload.name || !payload.price || !payload.oldPrice) return toast('Please complete product form');
+      const index = products.findIndex(p => p.id === payload.id);
+      if (index >= 0) products[index] = { ...products[index], ...payload };
+      else products.unshift(payload);
+      saveProducts(products);
+      closeModal();
+      renderAll();
+      toast('Product saved');
+    }
+
+    function deleteProduct(id) {
+      if (!confirm('Delete this product?')) return;
+      saveProducts(getProducts().filter(p => p.id !== id));
+      renderAll();
+      toast('Product deleted');
+    }
+
+    function updateOrderStatus(orderId, status) {
+      const orders = getOrders();
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+      order.status = status;
+      saveOrders(orders);
+      renderOrders();
+      renderAdmin();
+      toast(`Order ${orderId} updated`);
+    }
+
+    function setOrderFilter(status) {
+      app.orderFilter = status;
+      renderAdmin();
+    }
+
+    function openCategoryForm(id = '') {
+      app.editingCategoryId = id || null;
+      const category = id ? getCategories().find(c => c.id === id) : { name: '', emoji: '🏷️', visible: true };
+      openModal(`
+        <div class="modal-head"><h3 style="margin:0;">${id ? 'Edit' : 'Add'} Category</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+        <div class="form-grid">
+          <input class="field" id="cfName" placeholder="Category Name" value="${escapeHtml(category.name)}" />
+          <input class="field" id="cfEmoji" placeholder="Emoji" value="${escapeHtml(category.emoji)}" />
+          <label class="link-item"><span>Visible on homepage</span><input id="cfVisible" type="checkbox" ${category.visible ? 'checked' : ''} /></label>
+          <button class="primary-btn w-full" onclick="saveCategoryForm()">Save Category</button>
+        </div>`);
+    }
+
+    function saveCategoryForm() {
+      const categories = getCategories();
+      const payload = {
+        id: app.editingCategoryId || `c${Date.now()}`,
+        name: document.getElementById('cfName').value.trim(),
+        emoji: document.getElementById('cfEmoji').value.trim() || '🏷️',
+        visible: document.getElementById('cfVisible').checked
+      };
+      if (!payload.name) return toast('Category name is required');
+      const index = categories.findIndex(c => c.id === payload.id);
+      if (index >= 0) categories[index] = payload;
+      else categories.push(payload);
+      saveCategories(categories);
+      closeModal();
+      renderAll();
+      toast('Category saved');
+    }
+
+    function deleteCategory(id) {
+      if (!confirm('Delete this category?')) return;
+      saveCategories(getCategories().filter(c => c.id !== id));
+      renderAll();
+      toast('Category deleted');
+    }
+
+    function toggleCategoryVisibility(id) {
+      const categories = getCategories();
+      const category = categories.find(c => c.id === id);
+      if (!category) return;
+      category.visible = !category.visible;
+      saveCategories(categories);
+      renderAll();
+    }
+
+    function saveAdminSettings() {
+      const settings = {
+        ...getSettings(),
+        storeName: document.getElementById('settingStoreName').value.trim() || 'Samina Fashion Store',
+        whatsapp: document.getElementById('settingWhatsapp').value.trim() || '923001234567',
+        freeDeliveryMin: Number(document.getElementById('settingFreeDelivery').value) || 1500,
+        promoCode: document.getElementById('settingPromoCode').value.trim().toUpperCase() || 'SAMINA10',
+        promoDiscount: Number(document.getElementById('settingPromoDiscount').value) || 10,
+        flashHours: Number(document.getElementById('settingFlashHours').value) || 2,
+        flashMinutes: Number(document.getElementById('settingFlashMinutes').value) || 47
+      };
+      saveSettings(settings);
+      const newPass = document.getElementById('settingAdminPassword').value.trim();
+      if (newPass) localStorage.setItem(STORAGE_KEYS.adminPass, newPass);
+      setCountdown();
+      renderAll();
+      toast('Settings saved');
+    }
+
+    function searchFromHeader() {
+      app.shopFilters.q = document.getElementById('globalSearch').value.trim();
+      app.shopPage = 1;
+      renderShop();
+      showView('shop');
+    }
+
+    function initEvents() {
+      document.getElementById('modalBackdrop').addEventListener('click', (e) => { if (e.target.id === 'modalBackdrop') closeModal(); });
+      document.getElementById('headerCartBtn').addEventListener('click', () => showView('cart'));
+      document.getElementById('searchOpenBtn').addEventListener('click', searchFromHeader);
+      document.getElementById('globalSearch').addEventListener('keydown', (e) => { if (e.key === 'Enter') searchFromHeader(); });
+      document.getElementById('bellBtn').addEventListener('click', () => toast('New arrivals and flash sale alerts enabled'));
+      document.getElementById('whatsappBtn').addEventListener('click', openWhatsappGeneral);
+      document.getElementById('logoTapArea').addEventListener('click', handleLogoTap);
+      document.querySelectorAll('#customerNav .nav-btn').forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
+      document.querySelectorAll('#adminNav .nav-btn').forEach(btn => btn.addEventListener('click', () => setAdminTab(btn.dataset.adminTab)));
+      window.addEventListener('popstate', (e) => {
+        const view = e.state?.view || 'home';
+        app.adminMode = !!e.state?.adminMode;
+        showView(view, { skipHistory: true });
+      });
+      initPullToRefresh();
+      initInfiniteScroll();
+    }
+
+    function initInfiniteScroll() {
+      window.addEventListener('scroll', () => {
+        if (app.currentView !== 'shop') return;
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 140) {
+          const total = getFilteredProducts().length;
+          if (app.shopPage * app.shopPageSize < total) {
+            app.shopPage += 1;
+            renderShop();
+          }
+        }
+      }, { passive: true });
+    }
+
+    function initPullToRefresh() {
+      const spinner = document.getElementById('pullRefresh');
+      window.addEventListener('touchstart', (e) => {
+        if (window.scrollY <= 0) {
+          app.pullState.startY = e.touches[0].clientY;
+          app.pullState.active = true;
+          app.pullState.triggered = false;
+        }
+      }, { passive: true });
+      window.addEventListener('touchmove', (e) => {
+        if (!app.pullState.active) return;
+        const diff = e.touches[0].clientY - app.pullState.startY;
+        if (diff > 70 && !app.pullState.triggered) {
+          app.pullState.triggered = true;
+          spinner.classList.add('show');
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => {
+        if (app.pullState.triggered) {
+          setTimeout(() => {
+            spinner.classList.remove('show');
+            renderAll();
+            toast('Store refreshed');
+          }, 900);
+        }
+        app.pullState.active = false;
+      });
+    }
+
+    seedStorage();
+    setCountdown();
+    renderAll();
+    initEvents();
+    startIntervals();
+    history.replaceState({ view: 'home', adminMode: false }, '');
+    window.showView = showView;
+    window.filterCategory = filterCategory;
+    window.updateShopFilter = updateShopFilter;
+    window.loadMoreProducts = loadMoreProducts;
+    window.openProduct = openProduct;
+    window.quickAddToCart = quickAddToCart;
+    window.toggleWishlist = toggleWishlist;
+    window.setSize = setSize;
+    window.setColor = setColor;
+    window.changeDetailQty = changeDetailQty;
+    window.addDetailToCart = addDetailToCart;
+    window.buyNow = buyNow;
+    window.setDetailTab = setDetailTab;
+    window.changeCartQty = changeCartQty;
+    window.removeFromCart = removeFromCart;
+    window.applyPromo = applyPromo;
+    window.placeOrder = placeOrder;
+    window.toggleAccordion = toggleAccordion;
+    window.sendOrderWhatsapp = sendOrderWhatsapp;
+    window.openWhatsappGeneral = openWhatsappGeneral;
+    window.promptAdmin = promptAdmin;
+    window.verifyAdmin = verifyAdmin;
+    window.exitAdmin = exitAdmin;
+    window.openProductForm = openProductForm;
+    window.saveProductForm = saveProductForm;
+    window.deleteProduct = deleteProduct;
+    window.updateOrderStatus = updateOrderStatus;
+    window.setOrderFilter = setOrderFilter;
+    window.openCategoryForm = openCategoryForm;
+    window.saveCategoryForm = saveCategoryForm;
+    window.deleteCategory = deleteCategory;
+    window.toggleCategoryVisibility = toggleCategoryVisibility;
+    window.saveAdminSettings = saveAdminSettings;
+    window.closeModal = closeModal;
+  </script>
+</body>
+</html>
